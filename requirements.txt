@@ -1,0 +1,28 @@
+# Kafka
+kafka-python==2.0.2
+
+# Spark
+pyspark==3.4.1
+
+# Data processing
+pandas==2.0.3
+numpy==1.24.3
+
+# Elasticsearch
+elasticsearch==8.9.0
+
+# Faker for data generation
+Faker==19.3.1
+
+# HTTP client
+requests==2.31.0
+
+# HDFS client
+hdfs==2.7.0
+
+# Prometheus client
+prometheus-client==0.17.1
+
+# Testing
+pytest==7.4.0
+pytest-cov==4.1.0
