@@ -1,0 +1,3 @@
+"""
+Data generator module
+"""

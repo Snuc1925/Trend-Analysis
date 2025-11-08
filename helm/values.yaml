@@ -1,0 +1,57 @@
+# Default values for reddit-pipeline
+namespace: reddit-pipeline
+
+zookeeper:
+  replicas: 3
+  image: confluentinc/cp-zookeeper:7.4.0
+  storage: 5Gi
+
+kafka:
+  replicas: 3
+  image: confluentinc/cp-kafka:7.4.0
+  storage: 20Gi
+  replicationFactor: 3
+  minInsyncReplicas: 2
+
+hdfs:
+  namenode:
+    image: apache/hadoop:3.3.6
+  datanode:
+    replicas: 3
+    image: apache/hadoop:3.3.6
+    storage: 50Gi
+  replicationFactor: 3
+
+elasticsearch:
+  replicas: 3
+  image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+  storage: 30Gi
+  javaOpts: "-Xms512m -Xmx512m"
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 500m
+    limits:
+      memory: 2Gi
+      cpu: 1000m
+
+grafana:
+  image: grafana/grafana:10.0.0
+  adminPassword: admin
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+
+prometheus:
+  image: prom/prometheus:v2.45.0
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 500m
+    limits:
+      memory: 1Gi
+      cpu: 1000m

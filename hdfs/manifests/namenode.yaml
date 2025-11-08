@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hadoop-config
+data:
+  core-site.xml: |
+    <?xml version="1.0"?>
+    <configuration>
+      <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://namenode:9000</value>
+      </property>
+    </configuration>
+  hdfs-site.xml: |
+    <?xml version="1.0"?>
+    <configuration>
+      <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+      </property>
+      <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///hadoop/dfs/name</value>
+      </property>
+      <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///hadoop/dfs/data</value>
+      </property>
+      <property>
+        <name>dfs.webhdfs.enabled</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>dfs.namenode.http-address</name>
+        <value>0.0.0.0:9870</value>
+      </property>
+    </configuration>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: namenode
+  labels:
+    app: namenode
+spec:
+  type: NodePort
+  ports:
+  - port: 9000
+    name: hdfs
+    nodePort: 30900
+  - port: 9870
+    name: web
+    nodePort: 30870
+  selector:
+    app: namenode
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: namenode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: namenode
+  template:
+    metadata:
+      labels:
+        app: namenode
+    spec:
+      containers:
+      - name: namenode
+        image: apache/hadoop:3.3.6
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          hdfs namenode -format -force && \
+          hdfs namenode
+        ports:
+        - containerPort: 9000
+          name: hdfs
+        - containerPort: 9870
+          name: web
+        env:
+        - name: CLUSTER_NAME
+          value: "hadoop-cluster"
+        volumeMounts:
+        - name: hadoop-config
+          mountPath: /opt/hadoop/etc/hadoop/core-site.xml
+          subPath: core-site.xml
+        - name: hadoop-config
+          mountPath: /opt/hadoop/etc/hadoop/hdfs-site.xml
+          subPath: hdfs-site.xml
+        - name: namenode-data
+          mountPath: /hadoop/dfs/name
+      volumes:
+      - name: hadoop-config
+        configMap:
+          name: hadoop-config
+      - name: namenode-data
+        emptyDir: {}

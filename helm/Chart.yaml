@@ -1,0 +1,15 @@
+apiVersion: v2
+name: reddit-pipeline
+description: Lambda Architecture Big Data Pipeline for Reddit-like data
+type: application
+version: 1.0.0
+appVersion: "1.0"
+keywords:
+  - lambda-architecture
+  - big-data
+  - kafka
+  - spark
+  - elasticsearch
+  - grafana
+maintainers:
+  - name: Lambda Pipeline Team

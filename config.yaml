@@ -1,0 +1,74 @@
+# Lambda Architecture Pipeline Configuration
+
+# Kafka Configuration
+kafka:
+  bootstrap_servers: "localhost:30092"
+  topics:
+    - reddit.posts
+    - reddit.comments
+    - reddit.users
+  num_partitions: 3
+  replication_factor: 3
+
+# HDFS Configuration
+hdfs:
+  namenode_url: "http://localhost:30870"
+  base_path: "/data"
+  replication_factor: 3
+
+# Spark Configuration
+spark:
+  batch:
+    master: "local[4]"
+    app_name: "RedditBatchProcessor"
+  streaming:
+    master: "local[4]"
+    app_name: "RedditSpeedProcessor"
+    checkpoint_location: "/tmp/checkpoint"
+
+# Elasticsearch Configuration
+elasticsearch:
+  nodes: "localhost"
+  port: 9200
+  indices:
+    top_posts: "views_top_posts_v1"
+    subreddit_activity: "views_subreddit_activity_v1"
+    user_activity: "views_user_activity_v1"
+
+# Data Generation Configuration
+data_generation:
+  historical:
+    output_dir: "/tmp/historical_data"
+    num_days: 7
+    posts_per_day: 1000
+  realtime:
+    messages_per_second: 100
+    subreddits:
+      - python
+      - datascience
+      - machinelearning
+      - programming
+      - technology
+    num_users: 1000
+
+# Monitoring Configuration
+monitoring:
+  prometheus:
+    url: "http://localhost:30909"
+  grafana:
+    url: "http://localhost:30300"
+    username: "admin"
+    password: "admin"
+
+# Testing Configuration
+testing:
+  scalability:
+    initial_rate: 10
+    max_rate: 1000
+    step: 100
+    duration_seconds: 60
+  fault_tolerance:
+    components:
+      - kafka
+      - hdfs
+      - elasticsearch
